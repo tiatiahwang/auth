@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function SignUp() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,6 +34,7 @@ export default function SignUp() {
         setError(true);
         return;
       }
+      navigate('/sign-in');
     } catch (error) {
       setIsLoading(false);
       setError(true);
@@ -40,7 +43,7 @@ export default function SignUp() {
   return (
     <div className='max-w-lg mx-auto p-3'>
       <h1 className='font-semibold text-4xl text-center my-8'>
-        SignUp
+        Sign Up
       </h1>
       <form
         onSubmit={handleSubmit}
@@ -67,9 +70,11 @@ export default function SignUp() {
           placeholder='password'
           onChange={handleChange}
         />
-        <p className='text-center text-semibold text-red-700 my-2'>
-          {error && 'Something went wrong!'}
-        </p>
+        {error && (
+          <p className='text-center text-semibold text-red-700 my-2'>
+            Something went wrong!{' '}
+          </p>
+        )}
         <button
           disabled={isLoading}
           className='bg-gray-300 text-white p-3 rounded-md hover:bg-gray-400 disabled:bg-gray-200'
