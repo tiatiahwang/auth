@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import AVATAR from '../assets/avatar.jpg';
+import AVATAR_DEFAULT from '../assets/avatar.jpg';
 
 export default function Header() {
   const { currentUser } = useSelector(
@@ -23,7 +23,7 @@ export default function Header() {
           <Link to='/profile'>
             {currentUser ? (
               <img
-                src={currentUser.avater ?? AVATAR}
+                src={currentUser.avater ?? AVATAR_DEFAULT}
                 alt='avatar'
                 className='h-7 w-7 rounded-full object-cover'
               />
