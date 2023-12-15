@@ -5,13 +5,19 @@ import {
   uploadBytesResumable,
 } from 'firebase/storage';
 import { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { app } from '../firebase';
 import AVATAR_DEFAULT from '../assets/avatar.jpg';
+import {
+  updateUserStart,
+  updateUserSuccess,
+  updateUserFailure,
+} from '../redux/user/userSlice';
 
 export default function Profile() {
-  const { currentUser } = useSelector(
+  const dispatch = useDispatch();
+  const { currentUser, isLoading, error } = useSelector(
     (state) => state.user,
   );
   const fileRef = useRef();
@@ -19,6 +25,7 @@ export default function Profile() {
   const [imagePercent, setImagePercent] = useState(0);
   const [imageError, setImageError] = useState(false);
   const [formData, setFormData] = useState({});
+  const [updateSuccess, setUpdateSuccess] = useState(false);
 
   useEffect(() => {
     if (image) {
@@ -60,12 +67,49 @@ export default function Profile() {
     );
   };
 
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(
+        `/api/user/update/${currentUser._id}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        },
+      );
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(updateUserFailure(data));
+        return;
+      }
+      console.log(data);
+      dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true);
+    } catch (error) {
+      dispatch(updateUserFailure(error));
+    }
+  };
+
   return (
     <div className='max-w-lg mx-auto p-3'>
       <h1 className='font-semibold text-4xl text-center my-8'>
         Profile
       </h1>
-      <form className='flex flex-col gap-4'>
+      <form
+        onSubmit={handleSubmit}
+        className='flex flex-col gap-4'
+      >
         <input
           type='file'
           ref={fileRef}
@@ -75,11 +119,9 @@ export default function Profile() {
         />
         <img
           src={
-            formData.avatar !== ''
-              ? formData.avatar
-              : currentUser.avatar !== ''
-              ? currentUser.avatar
-              : AVATAR_DEFAULT
+            formData.avatar ||
+            currentUser.avatar ||
+            AVATAR_DEFAULT
           }
           alt='avatar'
           className='w-24 h-24 self-center cursor-pointer rounded-full object-cover'
@@ -106,6 +148,7 @@ export default function Profile() {
           defaultValue={currentUser.username}
           className='bg-gray-100 rounded-md p-3'
           placeholder='username'
+          onChange={handleChange}
         />
         <input
           type='email'
@@ -113,15 +156,17 @@ export default function Profile() {
           defaultValue={currentUser.email}
           className='bg-gray-100 rounded-md p-3'
           placeholder='email'
+          onChange={handleChange}
         />
         <input
           type='password'
           id='password'
           className='bg-gray-100 rounded-md p-3'
           placeholder='password'
+          onChange={handleChange}
         />
         <button className='bg-gray-300 text-white p-3 rounded-md hover:bg-gray-400 disabled:bg-gray-200'>
-          Update
+          {isLoading ? 'Loading...' : 'Update'}
         </button>
       </form>
       <div className='flex mt-4 justify-between'>
@@ -130,6 +175,16 @@ export default function Profile() {
         </span>
         <span className='cursor-pointer'>Sign out</span>
       </div>
+      {error && (
+        <p className='text-red-700 mt-4'>
+          Something went wrong.
+        </p>
+      )}
+      {updateSuccess && (
+        <p className='text-green-700 mt-4'>
+          Updated successfully.
+        </p>
+      )}
     </div>
   );
 }
