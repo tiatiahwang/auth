@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  currentUser: null,
-  isLoading: false,
-  error: false,
+  user: null,
+  loading: false,
+  error: null,
 };
 
 const userSlice = createSlice({
@@ -11,45 +11,45 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     signInStart: (state) => {
-      state.isLoading = true;
+      state.loading = true;
     },
     signInSuccess: (state, action) => {
-      state.currentUser = action.payload;
-      state.isLoading = false;
+      state.user = action.payload;
+      state.loading = false;
       state.error = false;
     },
     signInFailure: (state, action) => {
-      state.isLoading = false;
+      state.loading = false;
       state.error = action.payload;
     },
     updateUserStart: (state) => {
-      state.isLoading = true;
+      state.loading = true;
     },
     updateUserSuccess: (state, action) => {
-      state.currentUser = action.payload;
-      state.isLoading = false;
-      state.error = false;
+      state.user = action.payload;
+      state.loading = false;
+      state.error = null;
     },
     updateUserFailure: (state, action) => {
-      state.isLoading = false;
+      state.loading = false;
       state.error = action.payload;
     },
     deleteUserStart: (state) => {
-      state.isLoading = true;
+      state.loading = true;
     },
     deleteUserSuccess: (state) => {
-      state.currentUser = null;
-      state.isLoading = false;
-      state.error = false;
+      state.user = null;
+      state.loading = false;
+      state.error = null;
     },
     deleteUserFailure: (state, action) => {
-      state.isLoading = false;
+      state.loading = false;
       state.error = action.payload;
     },
     signOut: (state) => {
-      state.currentUser = null;
-      state.isLoading = false;
-      state.error = false;
+      state.user = null;
+      state.loading = false;
+      state.error = null;
     },
   },
 });

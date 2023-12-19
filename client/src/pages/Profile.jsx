@@ -21,7 +21,7 @@ import {
 
 export default function Profile() {
   const dispatch = useDispatch();
-  const { currentUser, isLoading, error } = useSelector(
+  const { user, isLoading, error } = useSelector(
     (state) => state.user,
   );
   const fileRef = useRef();
@@ -83,7 +83,7 @@ export default function Profile() {
     try {
       dispatch(updateUserStart());
       const res = await fetch(
-        `/api/user/update/${currentUser._id}`,
+        `/api/user/update/${user._id}`,
         {
           method: 'POST',
           headers: {
@@ -109,7 +109,7 @@ export default function Profile() {
     try {
       dispatch(deleteUserStart());
       const res = await fetch(
-        `/api/user/delete/${currentUser._id}`,
+        `/api/user/delete/${user._id}`,
         {
           method: 'DELETE',
         },
@@ -152,9 +152,7 @@ export default function Profile() {
         />
         <img
           src={
-            formData.avatar ||
-            currentUser.avatar ||
-            AVATAR_DEFAULT
+            formData.avatar || user.avatar || AVATAR_DEFAULT
           }
           alt='avatar'
           className='w-24 h-24 self-center cursor-pointer rounded-full object-cover'
@@ -178,7 +176,7 @@ export default function Profile() {
         <input
           type='text'
           id='username'
-          defaultValue={currentUser.username}
+          defaultValue={user.username}
           className='bg-gray-100 rounded-md p-3'
           placeholder='username'
           onChange={handleChange}
@@ -186,7 +184,7 @@ export default function Profile() {
         <input
           type='email'
           id='email'
-          defaultValue={currentUser.email}
+          defaultValue={user.email}
           className='bg-gray-100 rounded-md p-3'
           placeholder='email'
           onChange={handleChange}

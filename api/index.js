@@ -1,3 +1,4 @@
+import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import express from 'express';
@@ -13,10 +14,16 @@ mongoose
   .then(() => console.log('Connected to mongoDB'))
   .catch((e) => console.log('DB connection error: ', e));
 
+let corsOptions = {
+  origitn: '*',
+  credential: true,
+};
+
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors(corsOptions));
 
 app.listen(3000, () =>
   console.log('Server is running: https://localhost:3000'),
