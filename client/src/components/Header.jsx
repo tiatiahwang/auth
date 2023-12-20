@@ -15,20 +15,15 @@ export default function Header() {
           <Link to='/'>
             <li>Home</li>
           </Link>
-          <Link to='/about'>
-            <li>About</li>
-          </Link>
-          <Link to='/profile'>
-            {user ? (
-              <img
-                src={user.avatar ?? AVATAR_DEFAULT}
-                alt='avatar'
-                className='h-7 w-7 rounded-full object-cover'
-              />
-            ) : (
+          {user ? (
+            <Link to='/profile'>
+              <img src={user.avatar ?? AVATAR_DEFAULT} alt='avatar' className='h-7 w-7 rounded-full object-cover' />
+            </Link>
+          ) : (
+            <Link to='/sign-in'>
               <li>Sign In</li>
-            )}
-          </Link>
+            </Link>
+          )}
         </ul>
       </div>
     </div>
